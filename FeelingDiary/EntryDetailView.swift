@@ -9,14 +9,21 @@ import SwiftUI
 
 struct EntryDetailView: View {
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var viewModel: EntriesViewModel
+    
     @State private var text: String
+    @State private var date: Date
     @FocusState private var isTextFieldFocused: Bool
     
     let entry: Entry?
+    private let isNewEntry: Bool
     
     init(entry: Entry? = nil) {
         self.entry = entry
+        self.isNewEntry = (entry == nil)
+        
         _text = State(initialValue: entry?.content ?? "")
+        _date = State(initialValue: entry?.date ?? Date())
     }
     
     var body: some View {
@@ -53,6 +60,7 @@ struct EntryDetailView: View {
             .edgesIgnoringSafeArea(.top)
             
             Button(action: {
+                saveEntry()
                 dismiss()
             }) {
                 Image(systemName: "chevron.left")
@@ -107,7 +115,8 @@ struct EntryDetailView: View {
             Spacer()
             
             Button(action: {
-                isTextFieldFocused = false
+                saveEntry()
+                dismiss()
             }) {
                 Image(systemName: "chevron.right")
                     .font(.system(size: 20, weight: .light))
@@ -118,6 +127,33 @@ struct EntryDetailView: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
+    }
+    
+    // MARK: - Save Entry
+     
+    private func saveEntry() {
+        //Don't save if content is empty
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return
+        }
+        
+        if isNewEntry {
+            // Create new entry
+            let newEntry = Entry(
+                id: UUID(),
+                content: text,
+                date: date
+            )
+            viewModel.addEntry(newEntry)
+        } else if let existingEntry = entry {
+            // Update existing entry
+            let updatedEntry = Entry(
+                id: existingEntry.id,
+                content: text,
+                date: date
+            )
+            viewModel.updateEntry(updatedEntry)
+        }
     }
 }
 

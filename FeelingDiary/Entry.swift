@@ -7,10 +7,17 @@
 
 import Foundation
 
-struct Entry: Identifiable, Hashable {
+struct Entry: Identifiable, Hashable, Codable {
     let id: UUID
     var content: String
     var date: Date
     var tags: [String]
+    
+    init(id: UUID = UUID(), content: String = "", date: Date = Date(), tags: [String] = []) {
+        self.id = id
+        self.content = content
+        self.date = date
+        self.tags = tags
+    }
 }
 

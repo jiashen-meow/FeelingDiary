@@ -10,19 +10,51 @@ internal import Combine
 
 class EntriesViewModel: ObservableObject {
     @Published var allEntries: [Entry] = []
-    @Published var filteredEntries: [Entry] = []
+//    @Published var filteredEntries: [Entry] = []
     
     // Filter state
     @Published var selectedTags: [String] = []
     @Published var dateRange: (start: Date?, end: Date?) = (nil, nil)
     @Published var searchText: String = ""
     
+    private let dataManager = DataManager.shared
+    
     init() {
         loadEntries()
-        filteredEntries = allEntries
     }
     
+    // MARK: - Load Entries
+    
     func loadEntries() {
+        allEntries = dataManager.loadEntries()
+        
+        // If no entries exist, load sample data
+        if allEntries.isEmpty {
+            loadSampleData()
+        }
+    }
+    
+    // MARK: - Add Entry
+    
+    func addEntry(_ entry: Entry) {
+        dataManager.addEntry(entry, to: &allEntries)
+    }
+    
+    // MARK: - Update Entry
+    
+    func updateEntry(_ entry: Entry) {
+        dataManager.updateEntry(entry, in: &allEntries)
+    }
+    
+    // MARK: - Delete Entry
+    
+    func deleteEntry(_ entry: Entry) {
+        dataManager.deleteEntry(entry, from: &allEntries)
+    }
+    
+    // MARK: - Sample Data (for first launch)
+    
+    private func loadSampleData() {
         allEntries = [
             Entry(
                 id: UUID(),
@@ -105,7 +137,9 @@ class EntriesViewModel: ObservableObject {
                 date: Date().addingTimeInterval(-86400 * 11),
                 tags: ["#tired"]
             )
-            
         ]
+        
+        // Save sample data
+        dataManager.saveEntries(allEntries)
     }
 }

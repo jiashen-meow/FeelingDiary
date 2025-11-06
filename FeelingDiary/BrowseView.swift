@@ -32,9 +32,11 @@ struct BrowseView: View {
                 .background(Color(hex: "#FAFAFA"))
                 .navigationDestination(item: $selectedEntry) { entry in
                     EntryDetailView(entry: entry)
+                        .environmentObject(viewModel)
                 }
                 .navigationDestination(isPresented: $showNewEntry) {
                     EntryDetailView()
+                        .environmentObject(viewModel)
                 }
             }
         }
@@ -153,10 +155,17 @@ struct BrowseView: View {
         
         return ScrollView {
             LazyVGrid(columns: columns, spacing: 18) {
-                ForEach(viewModel.filteredEntries) { entry in
+                ForEach(viewModel.allEntries) { entry in
                     EntryCardView(entry: entry, width: cardWidth, height: cardHeight)
                         .onTapGesture {
                             selectedEntry = entry
+                        }
+                        .contextMenu {
+                            Button(role: .destructive) {
+                                viewModel.deleteEntry(entry)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
                         }
 //                        .background(.red)
                 }
