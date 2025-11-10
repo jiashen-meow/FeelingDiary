@@ -15,6 +15,7 @@ struct BrowseView: View {
     @State private var showTagFilter = false
     @State private var selectedEntry: Entry? = nil
     @State private var showNewEntry = false
+    @State private var showAIOptions = false
     
 
     var body: some View {
@@ -182,44 +183,107 @@ struct BrowseView: View {
             Spacer()
             HStack {
                 Spacer()
-                VStack(spacing: 16) {
-                    // AI Insights Button
-                    Button(action: {}) {
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 24, weight: .light))
-                            .foregroundColor(.primary)
-                            .frame(width: 56, height: 56)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .shadow(radius: 4)
-                    }
-                    
-                    // Export Button
-                    Button(action: {}) {
-                        Image(systemName: "square.and.arrow.up")
-                            .font(.system(size: 24, weight: .light))
-                            .foregroundColor(.primary)
-                            .frame(width: 56, height: 56)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .shadow(radius: 4)
-                    }
-                    
-                    // Add Button
-                    Button(action: {
-                        showNewEntry = true
-                    }) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 24, weight: .light))
-                            .foregroundColor(.primary)
-                            .frame(width: 56, height: 56)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .shadow(radius: 4)
-                    }
+                if !showAIOptions {
+                    firstTierButtons
+                        .padding(.trailing, 20)
+                        .padding(.bottom, 20)
+                } else {
+                    AIInsightButtons
+                        .padding(.trailing, 20)
+                        .padding(.bottom, 20)
                 }
-                .padding(.trailing, 20)
-                .padding(.bottom, 20)
+            }
+        }
+    }
+    
+    var firstTierButtons: some View {
+        VStack(spacing: 16) {
+            // AI Insights Button
+            Button(action: {
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                    showAIOptions.toggle()
+                }
+            }) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 24, weight: .light))
+                    .foregroundColor(.primary)
+                    .frame(width: 56, height: 56)
+                    .background(Color.white)
+                    .clipShape(Circle())
+                    .shadow(radius: 4)
+            }
+            
+            // Export Button
+            Button(action: {}) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.system(size: 24, weight: .light))
+                    .foregroundColor(.primary)
+                    .frame(width: 56, height: 56)
+                    .background(Color.white)
+                    .clipShape(Circle())
+                    .shadow(radius: 4)
+            }
+            
+            // Add Button
+            Button(action: {
+                showNewEntry = true
+            }) {
+                Image(systemName: "plus")
+                    .font(.system(size: 24, weight: .light))
+                    .foregroundColor(.primary)
+                    .frame(width: 56, height: 56)
+                    .background(Color.white)
+                    .clipShape(Circle())
+                    .shadow(radius: 4)
+            }
+        }
+    }
+    
+    var AIInsightButtons: some View {
+        VStack(alignment: .trailing, spacing: 16) {
+            Button(action: {
+                showAIOptions.toggle()
+            }) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 24, weight: .light))
+                    .foregroundColor(.primary)
+                    .frame(width: 56, height: 56)
+                    .background(Color.white)
+                    .clipShape(Circle())
+                    .shadow(radius: 4)
+            }
+            
+            Button(action: {}) {
+                Text("Summarize journals")
+                    .font(.system(size: 15, weight: .regular))
+                    .foregroundColor(.primary)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(Color.white)
+                    .cornerRadius(22)
+                    .shadow(radius: 4)
+            }
+            
+            Button(action: {}) {
+                Text("Generate talking points")
+                    .font(.system(size: 15, weight: .regular))
+                    .foregroundColor(.primary)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(Color.white)
+                    .cornerRadius(22)
+                    .shadow(radius: 4)
+            }
+            
+            Button(action: {}) {
+                Text("Recognize Pattern")
+                    .font(.system(size: 15, weight: .regular))
+                    .foregroundColor(.primary)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(Color.white)
+                    .cornerRadius(22)
+                    .shadow(radius: 4)
             }
         }
     }
